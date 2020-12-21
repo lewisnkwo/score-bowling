@@ -12,7 +12,9 @@ interface Frame {
 }
 
 class Bowling {
-  constructor(public rolls: number[]) {}
+  constructor(public rolls: number[]) {
+    console.log(this.createFrame());
+  }
 
   roll = (pins: number): Roll => {
     return {
@@ -22,11 +24,40 @@ class Bowling {
     };
   };
 
-  getScores = (firstRoll: Roll, secondRoll: Roll, thirdRoll: Roll): Frame => {
+  getScore = (
+    firstRoll: Roll,
+    secondRoll: Roll,
+    thirdRoll: Roll
+    // frameCount: number
+  ): Frame => {
     const scores: number[] = [];
+    scores.length = Math.min(scores.length, 2);
 
     if (firstRoll.strike) {
-      // continue...
+      if (secondRoll.strike) {
+        if (thirdRoll.strike) {
+          scores.push(10);
+          scores.push(10);
+          return {
+            scores,
+            case: "strike",
+          };
+        } else {
+          scores.push(thirdRoll.pins);
+          scores.push(10);
+          return {
+            scores,
+            case: "strike",
+          };
+        }
+      } else {
+        scores.push(10);
+        scores.push(secondRoll.pins + thirdRoll.pins);
+        return {
+          scores,
+          case: "strike",
+        };
+      }
     } else if (firstRoll.pins + secondRoll.pins === 10) {
       scores.push(10);
       scores.push(thirdRoll.pins);
@@ -35,8 +66,8 @@ class Bowling {
         case: "spare",
       };
     } else {
-      firstRoll.pins;
-      scores.push(10);
+      scores.push(firstRoll.pins);
+      scores.push(secondRoll.pins);
       return {
         scores,
         case: "open",
@@ -61,7 +92,7 @@ class Bowling {
 
     const thirdRoll = () => roll(randomPins());
 
-    const scores = this.getScores(
+    const scores = this.getScore(
       firstRoll(),
       secondRoll(firstRoll()),
       thirdRoll()
