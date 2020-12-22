@@ -16,10 +16,10 @@ class Bowling {
     console.log(this.createFrame());
   }
 
-  roll = (pins: number): Roll => {
+  roll = (pins: number, firstRollPins?: number): Roll => {
     return {
       pins,
-      pinsLeft: pins < 10 ? 10 - pins : undefined,
+      pinsLeft: firstRollPins ? firstRollPins - pins : 10 - pins,
       strike: pins === 10,
     };
   };
@@ -33,7 +33,12 @@ class Bowling {
     const scores: number[] = [];
     scores.length = Math.min(scores.length, 2);
 
+    console.log(firstRoll);
+    console.log(secondRoll);
+    console.log(thirdRoll);
+
     if (firstRoll.strike) {
+      // Strike
       if (secondRoll.strike) {
         if (thirdRoll.strike) {
           scores.push(10);
@@ -59,6 +64,7 @@ class Bowling {
         };
       }
     } else if (firstRoll.pins + secondRoll.pins === 10) {
+      // Spare
       scores.push(10);
       scores.push(thirdRoll.pins);
       return {
@@ -66,6 +72,7 @@ class Bowling {
         case: "spare",
       };
     } else {
+      // Open
       scores.push(firstRoll.pins);
       scores.push(secondRoll.pins);
       return {
@@ -75,30 +82,28 @@ class Bowling {
     }
   };
 
+  calculatePins = (pinLimit?: number) =>
+    pinLimit
+      ? Math.floor(Math.random() * (pinLimit + 1))
+      : Math.floor(Math.random() * 11);
+
   createFrame = (): Frame => {
-    const randomPins = (pinLimit?: number) =>
-      pinLimit
-        ? Math.floor(Math.random() * (pinLimit + 1))
-        : Math.floor(Math.random() * 11);
+    const roll = (pins: number, firstRollPins?: number) =>
+      this.roll(pins, firstRollPins);
 
-    const roll = (pins: number) => this.roll(pins);
+    const firstRoll = () => roll(this.calculatePins());
+    const secondRoll = (firstRoll: Roll) => {
+      return !firstRoll.strike
+        ? roll(this.calculatePins(firstRoll.pinsLeft), firstRoll.pinsLeft)
+        : roll(this.calculatePins());
+    };
+    const thirdRoll = () => roll(this.calculatePins());
 
-    const firstRoll = () => roll(randomPins());
+    const first = firstRoll();
+    const second = secondRoll(first);
+    const third = thirdRoll();
 
-    const secondRoll = (firstRoll: Roll) =>
-      !firstRoll.strike
-        ? roll(randomPins(firstRoll.pinsLeft))
-        : roll(randomPins());
-
-    const thirdRoll = () => roll(randomPins());
-
-    const scores = this.getScore(
-      firstRoll(),
-      secondRoll(firstRoll()),
-      thirdRoll()
-    );
-
-    return scores;
+    return this.getScore(first, second, third);
   };
 
   score = (): number => {

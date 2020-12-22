@@ -2,12 +2,12 @@ import Bowling from './bowling'
 
 describe('Bowling', () => {
   describe('Check game can be scored correctly.', () => {
-    xit('should be able to score a game with all gutterballs', () => {
+    it('should be able to score a game with all gutterballs', () => {
       const rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       expect(new Bowling(rolls).score()).toEqual(0)
     })
 
-    it('should be able to score a game with all open frames', () => {
+    xit('should be able to score a game with all open frames', () => {
       const rolls = [3, 6, 3, 6, 3, 6, 3, 6, 3, 6, 3, 6, 3, 6, 3, 6, 3, 6, 3, 6]
       expect(new Bowling(rolls).score()).toEqual(90)
     })
