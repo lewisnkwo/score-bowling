@@ -1,20 +1,24 @@
-type FrameCase = "open" | "spare" | "strike";
-
-interface Roll {
-  pins: number; // 'pins' as in the number of pins knocked down
-  pinsLeft: number | undefined;
-  strike: boolean;
-}
-
-interface Frame {
-  scores: number[];
-  case: FrameCase;
-}
+import { Roll, Frame } from "./types";
 
 class Bowling {
   constructor(public rolls: number[]) {
-    console.log(this.createFrame());
+    this.score();
+    // this.rolls = [];
   }
+
+  startGame = (rounds: number) => {
+    let totalScores: number[] = [];
+
+    for (let i = 0; i < rounds; i++) {
+      const frame = this.createFrame();
+      totalScores.push(...frame.scores);
+      if (i === rounds - 1) {
+        this.rolls = totalScores;
+        console.log(this.rolls);
+        console.log(this.score());
+      }
+    }
+  };
 
   roll = (pins: number, firstRollPins?: number): Roll => {
     return {
@@ -24,7 +28,7 @@ class Bowling {
     };
   };
 
-  getScore = (
+  getFrameScore = (
     firstRoll: Roll,
     secondRoll: Roll,
     thirdRoll: Roll
@@ -32,10 +36,6 @@ class Bowling {
   ): Frame => {
     const scores: number[] = [];
     scores.length = Math.min(scores.length, 2);
-
-    console.log(firstRoll);
-    console.log(secondRoll);
-    console.log(thirdRoll);
 
     if (firstRoll.strike) {
       // Strike
@@ -103,7 +103,7 @@ class Bowling {
     const second = secondRoll(first);
     const third = thirdRoll();
 
-    return this.getScore(first, second, third);
+    return this.getFrameScore(first, second, third);
   };
 
   score = (): number => {
