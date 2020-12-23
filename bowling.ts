@@ -2,8 +2,7 @@ import { Roll, Frame } from "./types";
 
 class Bowling {
   constructor(public rolls: number[]) {
-    this.score();
-    // this.rolls = [];
+    this.startGame(1);
   }
 
   startGame = (rounds: number) => {
@@ -11,11 +10,11 @@ class Bowling {
 
     for (let i = 0; i < rounds; i++) {
       const frame = this.createFrame();
+      const processGameRules = this.processRules(frame);
       totalScores.push(...frame.scores);
       if (i === rounds - 1) {
         this.rolls = totalScores;
-        console.log(this.rolls);
-        console.log(this.score());
+        return this.rolls;
       }
     }
   };
@@ -44,6 +43,7 @@ class Bowling {
           scores.push(10);
           scores.push(10);
           return {
+            rawScores: [firstRoll.pins, secondRoll.pins, thirdRoll.pins],
             scores,
             case: "strike",
           };
@@ -51,6 +51,7 @@ class Bowling {
           scores.push(thirdRoll.pins);
           scores.push(10);
           return {
+            rawScores: [firstRoll.pins, secondRoll.pins, thirdRoll.pins],
             scores,
             case: "strike",
           };
@@ -59,6 +60,7 @@ class Bowling {
         scores.push(10);
         scores.push(secondRoll.pins + thirdRoll.pins);
         return {
+          rawScores: [firstRoll.pins, secondRoll.pins, thirdRoll.pins],
           scores,
           case: "strike",
         };
@@ -68,6 +70,7 @@ class Bowling {
       scores.push(10);
       scores.push(thirdRoll.pins);
       return {
+        rawScores: [firstRoll.pins, secondRoll.pins, thirdRoll.pins],
         scores,
         case: "spare",
       };
@@ -76,9 +79,29 @@ class Bowling {
       scores.push(firstRoll.pins);
       scores.push(secondRoll.pins);
       return {
+        rawScores: [firstRoll.pins, secondRoll.pins, thirdRoll.pins],
         scores,
         case: "open",
       };
+    }
+  };
+
+  countTwice = (v: number) => v * 2;
+
+  processRules = (frame: Frame): Frame => {
+    console.log(frame.rawScores);
+    if (frame.case === "spare") {
+      // points scored in the roll after a spare are counted twice
+      const countScore =
+        frame.rawScores[0] +
+        frame.rawScores[1] +
+        this.countTwice(frame.rawScores[2]);
+      frame.totalValue = countScore;
+      console.log(countScore);
+
+      return frame;
+    } else {
+      return frame;
     }
   };
 
@@ -107,7 +130,10 @@ class Bowling {
   };
 
   score = (): number => {
-    return this.rolls.reduce((first, second) => first + second, 0);
+    return this.rolls.reduce((first, second) => {
+      // points scored in the roll after a spare are counted twice
+      return first + second;
+    }, 0);
   };
 }
 
