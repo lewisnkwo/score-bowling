@@ -7,17 +7,17 @@ describe('Bowling', () => {
       expect(new Bowling(rolls).score()).toEqual(0)
     })
 
-    xit('should be able to score a game with all open frames', () => {
+    it('should be able to score a game with all open frames', () => {
       const rolls = [3, 6, 3, 6, 3, 6, 3, 6, 3, 6, 3, 6, 3, 6, 3, 6, 3, 6, 3, 6]
       expect(new Bowling(rolls).score()).toEqual(90)
     })
 
-    xit('a spare followed by zeros is worth ten points', () => {
+    it('a spare followed by zeros is worth ten points', () => {
       const rolls = [6, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       expect(new Bowling(rolls).score()).toEqual(10)
     })
 
-    xit('points scored in the roll after a spare are counted twice', () => {
+    it('points scored in the roll after a spare are counted twice', () => {
       const rolls = [6, 4, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       expect(new Bowling(rolls).score()).toEqual(16)
     })

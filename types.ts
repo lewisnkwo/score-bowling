@@ -7,7 +7,6 @@ export interface Roll {
 }
 
 export interface Frame {
-  rawScores: number[];
   totalValue?: number; // a collection of the number of pins knocked down from each roll
   scores: number[];
   case: FrameCase;
