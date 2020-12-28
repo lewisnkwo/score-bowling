@@ -6,16 +6,16 @@ class Bowling {
     this.score();
   }
 
-  startGame = (rounds: number) => {
+  startGame = (rounds: number): number => {
     let totalScores: number[] = [];
-
-    for (let i = 0; i < rounds; i++) {
-      const frame = this.createFrame();
-      totalScores.push(...frame.scores);
-      if (i === rounds - 1) {
-        this.rolls = totalScores;
-        return this.rolls;
+    if (this.rolls.length > 0) {
+      return this.getTotal(this.rolls);
+    } else {
+      for (let i = 0; i < rounds; i++) {
+        const frame = this.createFrame();
+        totalScores.push(...frame.scores);
       }
+      return this.getTotal(totalScores);
     }
   };
 
@@ -25,6 +25,25 @@ class Bowling {
       pinsLeft: firstRollPins ? firstRollPins - pins : 10 - pins,
       strike: pins === 10,
     };
+  };
+
+  getTotal = (rolls: number[]): number => {
+    const firstRoll = rolls[0];
+    const secondRoll = rolls[1];
+    const thirdRoll = rolls[2];
+    const defaultReducer = (r: number[]) =>
+      r.reduce((first, second) => {
+        return first + second;
+      });
+
+    if (firstRoll + secondRoll === 10 && thirdRoll !== 0) {
+      console.log(this.rolls);
+      // TEST - points scored in the roll after a spare are counted twice
+      rolls[2] = thirdRoll * 2;
+      return defaultReducer(rolls);
+    } else {
+      return defaultReducer(rolls);
+    }
   };
 
   getFrameScore = (
@@ -57,7 +76,6 @@ class Bowling {
       const scores = [firstRoll.pins, secondRoll.pins, thirdRoll.pins];
       return {
         scores,
-        totalValue: this.processRules(scores, "countTwice"),
         case: "spare",
       };
     } else {
@@ -104,38 +122,7 @@ class Bowling {
       ? Math.floor(Math.random() * (pinLimit + 1))
       : Math.floor(Math.random() * 11);
 
-  applyRules = (): number => {
-    const rules = { countTwice: false };
-    const currentTotal = this.totalCount;
-
-    const defaultReducer = this.rolls.reduce((first, second) => {
-      return first + second;
-    });
-
-    this.rolls.reduce((first, second) => {
-      if (first + second === 10) {
-        rules.countTwice = true;
-      }
-      return 0;
-    });
-
-    const conditions = () => {
-      if (rules.countTwice) {
-        const rolls = this.rolls.splice(2);
-        console.log(rolls);
-        const countTwiceReducer = rolls.reduce((first, second) => {
-          return first + this.countTwice(second);
-        }, 10);
-        return currentTotal + countTwiceReducer;
-      } else {
-        return currentTotal + defaultReducer;
-      }
-    };
-
-    return conditions();
-  };
-
-  score = (): number => this.applyRules();
+  score = (): number => this.startGame(1);
 }
 
 export default Bowling;
