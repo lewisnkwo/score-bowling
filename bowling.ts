@@ -17,22 +17,41 @@ class Bowling {
   startGame = (): number => this.getTotal(this.rolls);
 
   getTotal = (rolls: number[]): number => {
-    const initialRolls = { ...rolls };
+    const init = { ...rolls }; // Get a copy of initial rolls
     let total = 0;
+    let lastFrame = false;
 
-    // points scored in the roll after a spare are counted twice
+    // **Rule** points scored in the roll after a spare are counted twice
+    // **Rule** consecutive spares each get a one roll bonus
+    // **Rule** should allow fill ball when the last frame is a spare
+    // **Rule** a strike earns ten points in a frame with a single roll
+    // **Rule** points scored in the two rolls after a strike are counted twice as a bonus
     for (let i = 0; i < rolls.length; i += 2) {
       const firstRoll = i;
       const secondRoll = i + 1;
       const thirdRoll = i + 2;
 
+      if (i === 18) {
+        lastFrame = true;
+      }
+
+      // If spare and not in the last frame
       if (
-        initialRolls[firstRoll] + initialRolls[secondRoll] === 10 &&
-        initialRolls[thirdRoll] !== 0
+        init[firstRoll] + init[secondRoll] === 10 &&
+        init[thirdRoll] !== 0 &&
+        !lastFrame
       ) {
         rolls[thirdRoll] = rolls[thirdRoll] * 2;
         total = this.defaultReducer(rolls);
       }
+
+      // If strike
+      if (init[firstRoll] === 10) {
+        rolls[secondRoll] = rolls[secondRoll] * 2;
+        rolls[thirdRoll] = rolls[thirdRoll] * 2;
+        total = this.defaultReducer(rolls);
+      }
+
       total = this.defaultReducer(rolls);
     }
     return total;

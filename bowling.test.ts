@@ -27,17 +27,17 @@ describe('Bowling', () => {
       expect(new Bowling(rolls).score()).toEqual(31)
     })
 
-    xit('should allow fill ball when the last frame is a spare', () => {
+    it('should allow fill ball when the last frame is a spare', () => {
       const rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 3, 7]
       expect(new Bowling(rolls).score()).toEqual(17)
     })
 
-    xit('a strike earns ten points in a frame with a single roll', () => {
+    it('a strike earns ten points in a frame with a single roll', () => {
       const rolls = [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       expect(new Bowling(rolls).score()).toEqual(10)
     })
 
-    xit('points scored in the two rolls after a strike are counted twice as a bonus', () => {
+    it('points scored in the two rolls after a strike are counted twice as a bonus', () => {
       const rolls = [10, 5, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       expect(new Bowling(rolls).score()).toEqual(26)
     })
