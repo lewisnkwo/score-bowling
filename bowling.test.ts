@@ -42,7 +42,7 @@ describe('Bowling', () => {
       expect(new Bowling(rolls).score()).toEqual(26)
     })
 
-    xit('should be able to score multiple strikes in a row', () => {
+    it('should be able to score multiple strikes in a row', () => {
       const rolls = [10, 10, 10, 5, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       expect(new Bowling(rolls).score()).toEqual(81)
     })

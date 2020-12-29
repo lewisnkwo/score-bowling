@@ -14,10 +14,16 @@ class Bowling {
     });
   };
 
+  strikeReducer = (r: number[], startFrom: number): number => {
+    r = r.splice(startFrom, 3);
+    return this.defaultReducer(r);
+  };
+
   startGame = (): number => this.getTotal(this.rolls);
 
   getTotal = (rolls: number[]): number => {
     const init = { ...rolls }; // Get a copy of initial rolls
+    let subTotal = 0;
     let total = 0;
     let lastFrame = false;
 
@@ -26,30 +32,34 @@ class Bowling {
     // **Rule** should allow fill ball when the last frame is a spare
     // **Rule** a strike earns ten points in a frame with a single roll
     // **Rule** points scored in the two rolls after a strike are counted twice as a bonus
+
     for (let i = 0; i < rolls.length; i += 2) {
       const firstRoll = i;
       const secondRoll = i + 1;
       const thirdRoll = i + 2;
 
+      const spare = init[firstRoll] + init[secondRoll] === 10;
+      const strike = init[firstRoll] === 10;
+
       if (i === 18) {
         lastFrame = true;
       }
 
-      // If spare and not in the last frame
-      if (
-        init[firstRoll] + init[secondRoll] === 10 &&
-        init[thirdRoll] !== 0 &&
-        !lastFrame
-      ) {
+      if (spare && init[thirdRoll] !== 0 && !lastFrame) {
         rolls[thirdRoll] = rolls[thirdRoll] * 2;
         total = this.defaultReducer(rolls);
       }
 
-      // If strike
-      if (init[firstRoll] === 10) {
-        rolls[secondRoll] = rolls[secondRoll] * 2;
-        rolls[thirdRoll] = rolls[thirdRoll] * 2;
-        total = this.defaultReducer(rolls);
+      // **Rule** should be able to score multiple strikes in a row
+      if (strike) {
+        if (init[secondRoll] === 10) {
+          subTotal += this.strikeReducer(rolls, firstRoll);
+          console.log(subTotal);
+        } else {
+          rolls[secondRoll] = rolls[secondRoll] * 2;
+          rolls[thirdRoll] = rolls[thirdRoll] * 2;
+          total = this.defaultReducer(rolls);
+        }
       }
 
       total = this.defaultReducer(rolls);
