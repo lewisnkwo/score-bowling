@@ -22,7 +22,7 @@ describe('Bowling', () => {
       expect(new Bowling(rolls).score()).toEqual(16)
     })
 
-    xit('consecutive spares each get a one roll bonus', () => {
+    it('consecutive spares each get a one roll bonus', () => {
       const rolls = [5, 5, 3, 7, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       expect(new Bowling(rolls).score()).toEqual(31)
     })

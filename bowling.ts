@@ -5,29 +5,37 @@ class Bowling {
   constructor(public rolls: number[]) {
     setTimeout(() => {
       this.score();
-    }, 100); // To avoid getTotal() being called twice
+    }, 100); // To avoid incorrect values being passed in from this.rolls()
   }
 
-  startGame = (): number => {
-    const rolls = this.rolls;
-    return this.getTotal(rolls);
+  defaultReducer = (r: number[]): number => {
+    return r.reduce((first, second) => {
+      return first + second;
+    });
   };
 
-  getTotal = (rolls: number[]): number => {
-    const firstRoll = rolls[0];
-    const secondRoll = rolls[1];
-    const thirdRoll = rolls[2];
-    const defaultReducer = (r: number[]) =>
-      r.reduce((first, second) => {
-        return first + second;
-      });
+  startGame = (): number => this.getTotal(this.rolls);
 
-    if (firstRoll + secondRoll === 10 && thirdRoll !== 0) {
-      rolls.splice(2, 1, rolls[2] * 2);
-      return defaultReducer(rolls);
-    } else {
-      return defaultReducer(rolls);
+  getTotal = (rolls: number[]): number => {
+    const initialRolls = { ...rolls };
+    let total = 0;
+
+    // points scored in the roll after a spare are counted twice
+    for (let i = 0; i < rolls.length; i += 2) {
+      const firstRoll = i;
+      const secondRoll = i + 1;
+      const thirdRoll = i + 2;
+
+      if (
+        initialRolls[firstRoll] + initialRolls[secondRoll] === 10 &&
+        initialRolls[thirdRoll] !== 0
+      ) {
+        rolls[thirdRoll] = rolls[thirdRoll] * 2;
+        total = this.defaultReducer(rolls);
+      }
+      total = this.defaultReducer(rolls);
     }
+    return total;
   };
 
   // roll = (pins: number, firstRollPins?: number): Roll => {
