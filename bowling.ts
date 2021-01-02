@@ -35,8 +35,7 @@ class Bowling {
       const strike = ref[firstRoll] === 10;
 
       // If in the last frame of the game
-      if (ref[i] === 18) {
-        // CHANGE!
+      if (i === 18) {
         lastFrame = true;
       }
 
