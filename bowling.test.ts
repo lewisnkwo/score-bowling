@@ -47,27 +47,27 @@ describe('Bowling', () => {
       expect(new Bowling(rolls).score()).toEqual(81)
     })
 
-    xit('should allow fill balls when the last frame is a strike', () => {
+    it('should allow fill balls when the last frame is a strike', () => {
       const rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 7, 1]
       expect(new Bowling(rolls).score()).toEqual(18)
     })
 
-    xit('rolling a spare with the two roll bonus does not get a bonus roll', () => {
+    it('rolling a spare with the two roll bonus does not get a bonus roll', () => {
       const rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 7, 3]
       expect(new Bowling(rolls).score()).toEqual(20)
     })
 
-    xit('strikes with the two roll bonus do not get bonus rolls', () => {
+    it('strikes with the two roll bonus do not get bonus rolls', () => {
       const rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 10, 10]
       expect(new Bowling(rolls).score()).toEqual(30)
     })
 
-    xit('a strike with the one roll bonus after a spare in the last frame does not get a bonus', () => {
+    it('a strike with the one roll bonus after a spare in the last frame does not get a bonus', () => {
       const rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 3, 10]
       expect(new Bowling(rolls).score()).toEqual(20)
     })
 
-    xit('should be able to score a perfect game', () => {
+    it('should be able to score a perfect game', () => {
       const rolls = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
       expect(new Bowling(rolls).score()).toEqual(300)
     })

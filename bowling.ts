@@ -10,59 +10,56 @@ class Bowling {
 
   defaultReducer = (r: number[]): number => {
     return r.reduce((first, second) => {
+      console.log(r);
+      console.log(`first: ${first}, second: ${second}`);
       return first + second;
     });
-  };
-
-  strikeReducer = (r: number[], startFrom: number): number => {
-    r = r.splice(startFrom, 3);
-    return this.defaultReducer(r);
   };
 
   startGame = (): number => this.getTotal(this.rolls);
 
   getTotal = (rolls: number[]): number => {
-    const init = { ...rolls }; // Get a copy of initial rolls
-    let subTotal = 0;
+    const ref = { ...rolls }; // Get a reference of initial rolls (due to `this.rolls` being mutable)
     let total = 0;
     let lastFrame = false;
 
-    // **Rule** points scored in the roll after a spare are counted twice
-    // **Rule** consecutive spares each get a one roll bonus
-    // **Rule** should allow fill ball when the last frame is a spare
-    // **Rule** a strike earns ten points in a frame with a single roll
-    // **Rule** points scored in the two rolls after a strike are counted twice as a bonus
-
-    for (let i = 0; i < rolls.length; i += 2) {
+    for (let i = 0; i < rolls.length; i++) {
       const firstRoll = i;
       const secondRoll = i + 1;
       const thirdRoll = i + 2;
 
-      const spare = init[firstRoll] + init[secondRoll] === 10;
-      const strike = init[firstRoll] === 10;
+      const spare =
+        ref[firstRoll] + ref[secondRoll] === 10 &&
+        ref[firstRoll] !== 10 &&
+        ref[secondRoll] !== 10;
 
+      const strike = ref[firstRoll] === 10;
+
+      // If in the last frame of the game
       if (i === 18) {
         lastFrame = true;
       }
 
-      if (spare && init[thirdRoll] !== 0 && !lastFrame) {
+      if (spare && ref[thirdRoll] !== 0 && !lastFrame) {
         rolls[thirdRoll] = rolls[thirdRoll] * 2;
         total = this.defaultReducer(rolls);
-      }
-
-      // **Rule** should be able to score multiple strikes in a row
-      if (strike) {
-        if (init[secondRoll] === 10) {
-          subTotal += this.strikeReducer(rolls, firstRoll);
-          console.log(subTotal);
-        } else {
+      } else if (strike) {
+        if (lastFrame) {
+          this.defaultReducer(rolls);
+        } else if (ref[secondRoll] === 10) {
+          rolls[firstRoll] =
+            rolls[firstRoll] + rolls[secondRoll] + rolls[thirdRoll];
+          total = this.defaultReducer(rolls);
+        } /* else if ((ref[thirdRoll]) === 10) {
+          this.defaultReducer(rolls);
+        } */ else {
           rolls[secondRoll] = rolls[secondRoll] * 2;
           rolls[thirdRoll] = rolls[thirdRoll] * 2;
           total = this.defaultReducer(rolls);
         }
+      } else {
+        total = this.defaultReducer(rolls);
       }
-
-      total = this.defaultReducer(rolls);
     }
     return total;
   };
