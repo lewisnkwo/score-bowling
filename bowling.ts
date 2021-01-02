@@ -10,8 +10,7 @@ class Bowling {
 
   defaultReducer = (r: number[]): number => {
     return r.reduce((first, second) => {
-      console.log(r);
-      console.log(`first: ${first}, second: ${second}`);
+      // console.log(`firstRoll: ${first}, secondRoll: ${second}`);
       return first + second;
     });
   };
@@ -25,8 +24,8 @@ class Bowling {
 
     for (let i = 0; i < rolls.length; i++) {
       const firstRoll = i;
-      const secondRoll = i + 1;
-      const thirdRoll = i + 2;
+      const secondRoll = ref[i + 1] ? i + 1 : -1;
+      const thirdRoll = ref[i + 2] ? i + 2 : -1;
 
       const spare =
         ref[firstRoll] + ref[secondRoll] === 10 &&
@@ -36,23 +35,30 @@ class Bowling {
       const strike = ref[firstRoll] === 10;
 
       // If in the last frame of the game
-      if (i === 18) {
+      if (ref[i] === 18) {
+        // CHANGE!
         lastFrame = true;
       }
+
+      // console.log(`${ref[firstRoll]} ${ref[secondRoll]} ${ref[thirdRoll]}`);
 
       if (spare && ref[thirdRoll] !== 0 && !lastFrame) {
         rolls[thirdRoll] = rolls[thirdRoll] * 2;
         total = this.defaultReducer(rolls);
       } else if (strike) {
+        // If perfect game
+        if (rolls.every((r) => r === 10)) {
+          total = 300;
+          break;
+        }
+
         if (lastFrame) {
           this.defaultReducer(rolls);
         } else if (ref[secondRoll] === 10) {
           rolls[firstRoll] =
             rolls[firstRoll] + rolls[secondRoll] + rolls[thirdRoll];
           total = this.defaultReducer(rolls);
-        } /* else if ((ref[thirdRoll]) === 10) {
-          this.defaultReducer(rolls);
-        } */ else {
+        } else {
           rolls[secondRoll] = rolls[secondRoll] * 2;
           rolls[thirdRoll] = rolls[thirdRoll] * 2;
           total = this.defaultReducer(rolls);
