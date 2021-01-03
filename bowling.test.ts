@@ -74,32 +74,32 @@ describe('Bowling', () => {
   })
 
   describe('Check game rules.', () => {
-    xit('rolls can not score negative points', () => {
+    it('rolls can not score negative points', () => {
       const rolls = [-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       expect(() => { new Bowling(rolls).score() }).toThrowError('Pins must have a value from 0 to 10')
     })
 
-    xit('a roll can not score more than 10 points', () => {
+    it('a roll can not score more than 10 points', () => {
       const rolls = [11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       expect(() => { new Bowling(rolls).score() }).toThrowError('Pins must have a value from 0 to 10')
     })
 
-    xit('two rolls in a frame can not score more than 10 points', () => {
+    it('two rolls in a frame can not score more than 10 points', () => {
       const rolls = [5, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       expect(() => { new Bowling(rolls).score() }).toThrowError('Pin count exceeds pins on the lane')
     })
 
-    xit('two bonus rolls after a strike in the last frame can not score more than 10 points', () => {
+    it('two bonus rolls after a strike in the last frame can not score more than 10 points', () => {
       const rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 5, 6]
       expect(() => { new Bowling(rolls).score() }).toThrowError('Pin count exceeds pins on the lane')
     })
 
-    xit('two bonus rolls after a strike in the last frame can score more than 10 points if one is a strike', () => {
+    it('two bonus rolls after a strike in the last frame can score more than 10 points if one is a strike', () => {
       const rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 10, 6]
       expect(new Bowling(rolls).score()).toEqual(26)
     })
 
-    xit('the second bonus rolls after a strike in the last frame can not be a strike if the first one is not a strike', () => {
+    it('the second bonus rolls after a strike in the last frame can not be a strike if the first one is not a strike', () => {
       const rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 6, 10]
       expect(() => { new Bowling(rolls).score() }).toThrowError('Pin count exceeds pins on the lane')
     })

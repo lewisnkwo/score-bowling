@@ -75,7 +75,38 @@ class Bowling {
     return total;
   };
 
-  checkGameRules = () => {};
+  checkGameRules = (r: number[]): number => {
+    const isMoreThan10Points = (r: number[]): boolean => {
+      let decision: boolean = false;
+      for (let i = 0; i < r.length - 1; i++) {
+        const firstRoll = r[i];
+        const secondRoll = r[i + 1];
+        const firstPreviousRoll = r[i - 1];
+
+        const frame = [firstRoll, secondRoll];
+
+        if (
+          this.defaultReducer(frame) > 10 &&
+          firstRoll !== 10 &&
+          secondRoll !== 10 &&
+          firstPreviousRoll + firstRoll !== 10
+        ) {
+          decision = true;
+          break;
+        }
+      }
+      return decision;
+    };
+
+    if (!r.every((r) => r >= 0 && r <= 10)) {
+      throw new Error("Pins must have a value from 0 to 10");
+    } else if (isMoreThan10Points(r)) {
+      throw new Error("Pin count exceeds pins on the lane");
+    } else {
+    }
+
+    return this.startGame();
+  };
 
   // roll = (pins: number, firstRollPins?: number): Roll => {
   //   return {
@@ -171,7 +202,13 @@ class Bowling {
   //     ? Math.floor(Math.random() * (pinLimit + 1))
   //     : Math.floor(Math.random() * 11);
 
-  score = (): number => this.startGame();
+  score = (): number => {
+    try {
+      return this.checkGameRules(this.rolls);
+    } catch (e) {
+      throw new Error(e);
+    }
+  };
 }
 
 export default Bowling;
