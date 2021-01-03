@@ -104,17 +104,17 @@ describe('Bowling', () => {
       expect(() => { new Bowling(rolls).score() }).toThrowError('Pin count exceeds pins on the lane')
     })
 
-    xit('an unstarted game can not be scored', () => {
+    it('an unstarted game can not be scored', () => {
       const rolls: number[] = []
       expect(() => { new Bowling(rolls).score() }).toThrowError('Score cannot be taken until the end of the game')
     })
 
-    xit('an incomplete game can not be scored', () => {
+    it('an incomplete game can not be scored', () => {
       const rolls = [0, 0]
       expect(() => { new Bowling(rolls).score() }).toThrowError('Score cannot be taken until the end of the game')
     })
 
-    xit('a game with more than ten frames and no last frame spare or strike can not be scored', () => {
+    it('a game with more than ten frames and no last frame spare or strike can not be scored', () => {
       const rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       expect(() => { new Bowling(rolls).score() }).toThrowError('Should not be able to roll after game is over')
     })

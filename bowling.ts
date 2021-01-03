@@ -102,7 +102,10 @@ class Bowling {
       throw new Error("Pins must have a value from 0 to 10");
     } else if (isMoreThan10Points(r)) {
       throw new Error("Pin count exceeds pins on the lane");
-    } else {
+    } else if (r === [] || r.length < 12) {
+      throw new Error("Score cannot be taken until the end of the game");
+    } else if (r.every((r) => r === 0) && r.length > 20) {
+      throw new Error("Should not be able to roll after game is over");
     }
 
     return this.startGame();
