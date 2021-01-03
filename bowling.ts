@@ -8,12 +8,8 @@ class Bowling {
     }, 100); // To avoid incorrect values being passed in from this.rolls()
   }
 
-  defaultReducer = (r: number[]): number => {
-    return r.reduce((first, second) => {
-      // console.log(`firstRoll: ${first}, secondRoll: ${second}`);
-      return first + second;
-    });
-  };
+  defaultReducer = (r: number[]): number =>
+    r.reduce((first, second) => first + second);
 
   startGame = (): number => this.getTotal(this.rolls);
 
@@ -35,11 +31,20 @@ class Bowling {
       const strike = ref[firstRoll] === 10;
 
       // If in the last frame of the game
-      if (i === 18) {
-        lastFrame = true;
+      if (
+        rolls[rolls.length - 3] + rolls[rolls.length - 2] ===
+          10 /* last frame is spare */ ||
+        rolls[rolls.length - 3] === 10 /* last frame is strike */
+      ) {
+        if (i === rolls.length - 3) {
+          lastFrame = true;
+        }
+      } else {
+        // since there are no fill balls...
+        if (i === rolls.length - 2) {
+          lastFrame = true;
+        }
       }
-
-      // console.log(`${ref[firstRoll]} ${ref[secondRoll]} ${ref[thirdRoll]}`);
 
       if (spare && ref[thirdRoll] !== 0 && !lastFrame) {
         rolls[thirdRoll] = rolls[thirdRoll] * 2;
@@ -66,8 +71,11 @@ class Bowling {
         total = this.defaultReducer(rolls);
       }
     }
+
     return total;
   };
+
+  checkGameRules = () => {};
 
   // roll = (pins: number, firstRollPins?: number): Roll => {
   //   return {
