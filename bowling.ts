@@ -60,7 +60,7 @@ class Bowling {
       if (rolls.every((r) => r === 10)) {
         total = 300;
         break;
-      } 
+      }
 
       if (spare && ref[thirdRoll] !== 0 && !this.isLastFrame) {
         rolls[thirdRoll] = rolls[thirdRoll] * 2;
@@ -68,17 +68,13 @@ class Bowling {
       } else if (strike) {
         if (this.isLastFrame) {
           const lastFrame = this.lastFrame;
-
           if (lastFrame.length === 3) {
-            const bonusRollOne = lastFrame[1];
-            const bonusRollTwo = lastFrame[2];
+            const currentRoll = lastFrame[0];
+            const rollOne = lastFrame[1];
 
-            const isLastFrameASpare = bonusRollOne + bonusRollTwo === 10;
-            const isLastFrameAStrike = [bonusRollOne, bonusRollTwo].includes(10);
-
-            if (isLastFrameASpare || isLastFrameAStrike) {
+            if (currentRoll + rollOne === 10) {
               total = this.defaultReducer(rolls);
-            } 
+            }
           }
         } else if (ref[secondRoll] === 10) {
           rolls[firstRoll] =
@@ -109,17 +105,21 @@ class Bowling {
         this.checkIfLastFrame(r, i);
         if (this.isLastFrame) {
           const lastFrame = this.lastFrame;
-          const bonusRollOne = lastFrame[1];
-          const bonusRollTwo = lastFrame[2];
 
-          if (
-            lastFrame.length === 3 &&
-            bonusRollOne + bonusRollTwo >= 10 &&
-            !lastFrame.every((r) => r === 10)
-          ) {
-            if (bonusRollTwo === 10) {
-              decision = true;
-              break;
+          const currentRoll = lastFrame[0];
+          const rollOne = lastFrame[1];
+          const rollTwo = lastFrame[2];
+
+          if (lastFrame.length === 3) {
+            if (!lastFrame.every((r) => r === 10)) {
+              if (rollTwo === 10) {
+                if (currentRoll + rollOne === 10) {
+                  decision = false;
+                  break;
+                }
+                decision = true;
+                break;
+              }
             }
           }
         }
@@ -143,7 +143,12 @@ class Bowling {
       throw new Error("Pin count exceeds pins on the lane");
     } else if (r === [] || r.length < 12) {
       throw new Error("Score cannot be taken until the end of the game");
-    } else if (r.length > 20 && this.isLastFrame && this.lastFrame.every((r) => typeof r === 'number')) {
+    } else if (
+      r.length > 20 &&
+      this.isLastFrame &&
+      this.lastFrame.every((r) => typeof r === "number") && // if rolls are defined
+      this.lastFrame[0] + this.lastFrame[1] !== 10 // if a spare exists in last ignore, ignore rule
+    ) {
       throw new Error("Should not be able to roll after game is over");
     } else return this.startGame();
   };
