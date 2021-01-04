@@ -137,17 +137,51 @@ class Bowling {
       return decision;
     };
 
+    const checkIfScoresMissing = (r: number[]): boolean => {
+      const lastFrame = r.slice(-3);
+
+      if (
+        lastFrame[0] + lastFrame[1] === 10 &&
+        lastFrame[0] !== 10 &&
+        lastFrame[1] !== 10 &&
+        lastFrame[2] > 0
+      ) {
+        // if first two rolls in last frame is a spare and last roll is a strike
+        return false;
+      } else if (r === [] || r.length < 12) {
+        return true;
+      } else if (
+        lastFrame[0] !== 10 &&
+        lastFrame[1] === 10 &&
+        lastFrame[2] === 10
+      ) {
+        // both bonus rolls for a strike in the last frame must be rolled before score can be calculated
+        return true;
+      } else if (lastFrame[0] === 0 && lastFrame[1] + lastFrame[2] === 10) {
+        // bonus roll for a spare in the last frame must be rolled before score can be calculated
+        return true;
+      } else if (
+        lastFrame[0] !== 10 &&
+        lastFrame[1] !== 10 &&
+        lastFrame[2] === 10
+      ) {
+        // bonus rolls for a strike in the last frame must be rolled before score can be calculated
+        return true;
+      }
+      return false;
+    };
+
     if (!r.every((r) => r >= 0 && r <= 10)) {
       throw new Error("Pins must have a value from 0 to 10");
     } else if (isIncorrectPinCount(r)) {
       throw new Error("Pin count exceeds pins on the lane");
-    } else if (r === [] || r.length < 12) {
+    } else if (checkIfScoresMissing(r)) {
       throw new Error("Score cannot be taken until the end of the game");
     } else if (
       r.length > 20 &&
       this.isLastFrame &&
       this.lastFrame.every((r) => typeof r === "number") && // if rolls are defined
-      this.lastFrame[0] + this.lastFrame[1] !== 10 // if a spare exists in last ignore, ignore rule
+      this.lastFrame[0] + this.lastFrame[1] !== 10 // if a spare exists in last frame, ignore rule
     ) {
       throw new Error("Should not be able to roll after game is over");
     } else return this.startGame();

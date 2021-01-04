@@ -119,17 +119,17 @@ describe('Bowling', () => {
       expect(() => { new Bowling(rolls).score() }).toThrowError('Should not be able to roll after game is over')
     })
 
-    xit('bonus rolls for a strike in the last frame must be rolled before score can be calculated', () => {
+    it('bonus rolls for a strike in the last frame must be rolled before score can be calculated', () => {
       const rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10]
       expect(() => { new Bowling(rolls).score() }).toThrowError('Score cannot be taken until the end of the game')
     })
 
-    xit('both bonus rolls for a strike in the last frame must be rolled before score can be calculated', () => {
+    it('both bonus rolls for a strike in the last frame must be rolled before score can be calculated', () => {
       const rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 10]
       expect(() => { new Bowling(rolls).score() }).toThrowError('Score cannot be taken until the end of the game')
     })
 
-    xit('bonus roll for a spare in the last frame must be rolled before score can be calculated', () => {
+    it('bonus roll for a spare in the last frame must be rolled before score can be calculated', () => {
       const rolls = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 3]
       expect(() => { new Bowling(rolls).score() }).toThrowError('Score cannot be taken until the end of the game')
     })
