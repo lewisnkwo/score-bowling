@@ -1,4 +1,10 @@
+// import CreateFrames from "./createFrames";
+import Utils from "./utils";
+import { Roll } from "./types";
+
 class Bowling {
+  private utils: Utils = new Utils();
+
   totalCount: number = 0;
   isLastFrame: boolean = false;
   lastFrame: number[] = [];
@@ -9,12 +15,17 @@ class Bowling {
     }, 100); // To avoid incorrect values being passed in from this.rolls()
   }
 
-  defaultReducer = (r: number[]): number =>
-    r.reduce((first, second) => first + second);
+  public roll = (pins: number, firstRollPins?: number): Roll => {
+    return {
+      pins,
+      pinsLeft: firstRollPins ? firstRollPins - pins : 10 - pins,
+      strike: pins === 10,
+    };
+  };
 
-  startGame = (): number => this.getTotal(this.rolls);
+  public startGame = (): number => this.getTotal(this.rolls);
 
-  checkIfLastFrame = (r: number[], i: number) => {
+  private checkIfLastFrame = (r: number[], i: number) => {
     if (
       r[r.length - 3] + r[r.length - 2] === 10 /* last frame is spare */ ||
       r[r.length - 3] === 10 /* last frame is strike */
@@ -38,7 +49,7 @@ class Bowling {
     }
   };
 
-  getTotal = (rolls: number[]): number => {
+  private getTotal = (rolls: number[]): number => {
     const ref = { ...rolls }; // Get a reference of initial rolls (due to `this.rolls` being mutable)
     let total = 0;
 
@@ -64,7 +75,7 @@ class Bowling {
 
       if (spare && ref[thirdRoll] !== 0 && !this.isLastFrame) {
         rolls[thirdRoll] = rolls[thirdRoll] * 2;
-        total = this.defaultReducer(rolls);
+        total = this.utils.defaultReducer(rolls);
       } else if (strike) {
         if (this.isLastFrame) {
           const lastFrame = this.lastFrame;
@@ -73,27 +84,27 @@ class Bowling {
             const rollOne = lastFrame[1];
 
             if (currentRoll + rollOne === 10) {
-              total = this.defaultReducer(rolls);
+              total = this.utils.defaultReducer(rolls);
             }
           }
         } else if (ref[secondRoll] === 10) {
           rolls[firstRoll] =
             rolls[firstRoll] + rolls[secondRoll] + rolls[thirdRoll];
-          total = this.defaultReducer(rolls);
+          total = this.utils.defaultReducer(rolls);
         } else {
           rolls[secondRoll] = rolls[secondRoll] * 2;
           rolls[thirdRoll] = rolls[thirdRoll] * 2;
-          total = this.defaultReducer(rolls);
+          total = this.utils.defaultReducer(rolls);
         }
       } else {
-        total = this.defaultReducer(rolls);
+        total = this.utils.defaultReducer(rolls);
       }
     }
 
     return total;
   };
 
-  checkGameRules = (r: number[]): number => {
+  private checkGameRules = (r: number[]): number => {
     const isIncorrectPinCount = (r: number[]): boolean => {
       let decision: boolean = false;
       for (let i = 0; i < r.length - 1; i++) {
@@ -125,7 +136,7 @@ class Bowling {
         }
 
         if (
-          this.defaultReducer(currentFrame) > 10 &&
+          this.utils.defaultReducer(currentFrame) > 10 &&
           firstRoll !== 10 &&
           secondRoll !== 10 &&
           firstPreviousRoll + firstRoll !== 10
@@ -187,7 +198,7 @@ class Bowling {
     } else return this.startGame();
   };
 
-  score = (): number => {
+  public score = (): number => {
     try {
       return this.checkGameRules(this.rolls);
     } catch (e) {

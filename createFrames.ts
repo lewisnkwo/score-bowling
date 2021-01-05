@@ -1,15 +1,8 @@
-
-import Bowling from './bowling'
 import { Roll, Frame } from "./types";
+import Bowling from "./bowling";
 
-class CreateFrames extends Bowling {
-    roll = (pins: number, firstRollPins?: number): Roll => {
-    return {
-      pins,
-      pinsLeft: firstRollPins ? firstRollPins - pins : 10 - pins,
-      strike: pins === 10,
-    };
-  };
+class CreateFrames {
+  private scoreBowling: Bowling = new Bowling([]);
 
   getFrameScore = (
     firstRoll: Roll,
@@ -52,20 +45,9 @@ class CreateFrames extends Bowling {
     }
   };
 
-  countTwice = (v: number) => v * 2;
-
-  processRules = (scores: number[], condition: string): number => {
-    if (condition === "countTwice") {
-      // points scored in the roll after a spare are counted twice
-      return scores[0] + scores[1] + this.countTwice(scores[2]);
-    } else {
-      return scores[0] + scores[1] + scores[2];
-    }
-  };
-
   createFrame = (): Frame => {
     const roll = (pins: number, firstRollPins?: number) =>
-      this.roll(pins, firstRollPins);
+      this.scoreBowling.roll(pins, firstRollPins);
 
     const firstRoll = () => roll(this.calculatePins());
     const secondRoll = (firstRoll: Roll) => {
