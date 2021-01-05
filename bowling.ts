@@ -182,18 +182,19 @@ class Bowling {
       return false;
     };
 
+    const isGameUnfinished = (r: number[]): boolean =>
+      r.length > 20 &&
+      this.isLastFrame &&
+      this.lastFrame.every((r) => typeof r === "number") && // if rolls are defined
+      this.lastFrame[0] + this.lastFrame[1] !== 10; // if a spare exists in last frame, ignore rule
+
     if (!r.every((r) => r >= 0 && r <= 10)) {
       throw new Error("Pins must have a value from 0 to 10");
     } else if (isIncorrectPinCount(r)) {
       throw new Error("Pin count exceeds pins on the lane");
     } else if (checkIfScoresMissing(r)) {
       throw new Error("Score cannot be taken until the end of the game");
-    } else if (
-      r.length > 20 &&
-      this.isLastFrame &&
-      this.lastFrame.every((r) => typeof r === "number") && // if rolls are defined
-      this.lastFrame[0] + this.lastFrame[1] !== 10 // if a spare exists in last frame, ignore rule
-    ) {
+    } else if (isGameUnfinished(r)) {
       throw new Error("Should not be able to roll after game is over");
     } else return this.startGame();
   };
