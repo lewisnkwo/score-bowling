@@ -1,13 +1,11 @@
-// import CreateFrames from "./createFrames";
 import Utils from "./utils";
-import { Roll } from "./types";
+import CreateRolls from "./createRolls";
 
 class Bowling {
   private utils: Utils = new Utils();
-
-  totalCount: number = 0;
-  isLastFrame: boolean = false;
-  lastFrame: number[] = [];
+  private createRolls: CreateRolls = new CreateRolls();
+  private isLastFrame: boolean = false;
+  private lastFrame: number[] = [];
 
   constructor(public rolls: number[]) {
     setTimeout(() => {
@@ -15,15 +13,11 @@ class Bowling {
     }, 100); // To avoid incorrect values being passed in from this.rolls()
   }
 
-  public roll = (pins: number, firstRollPins?: number): Roll => {
-    return {
-      pins,
-      pinsLeft: firstRollPins ? firstRollPins - pins : 10 - pins,
-      strike: pins === 10,
-    };
-  };
+  public roll = (pins: number) =>
+    this.getTotal(this.createRolls.generateRolls(pins));
 
-  public startGame = (): number => this.getTotal(this.rolls);
+  public startGame = (randomiseRolls: boolean): number =>
+    randomiseRolls ? this.roll(10) : this.getTotal(this.rolls);
 
   private checkIfLastFrame = (r: number[], i: number) => {
     if (
@@ -196,7 +190,7 @@ class Bowling {
       throw new Error("Score cannot be taken until the end of the game");
     } else if (isGameUnfinished(r)) {
       throw new Error("Should not be able to roll after game is over");
-    } else return this.startGame();
+    } else return this.startGame(false); // If `true` this.rolls will be randomised (CreateFrames)
   };
 
   public score = (): number => {
