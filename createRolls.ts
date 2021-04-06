@@ -2,10 +2,10 @@ import { Roll, Frame } from "./types";
 import Utils from "./utils";
 
 class CreateRolls {
-  private utils: Utils = new Utils();
-  public rolls: number[] = [];
+  utils: Utils = new Utils();
+  rolls: number[] = [];
 
-  public roll = (pins: number, firstRollPins?: number): Roll => {
+  roll = (pins: number, firstRollPins?: number): Roll => {
     return {
       pins,
       pinsLeft: firstRollPins ? firstRollPins - pins : 10 - pins,
@@ -13,7 +13,7 @@ class CreateRolls {
     };
   };
 
-  public generateRolls = (pinRounds: number): number[] => {
+  generateRolls = (pinRounds: number): number[] => {
     let totalScores: number[] = [];
 
     for (let i = 0; i < pinRounds; i++) {
@@ -26,7 +26,7 @@ class CreateRolls {
     return totalScores;
   };
 
-  private getFrameScore = (
+  getFrameScore = (
     firstRoll: Roll,
     secondRoll: Roll,
     thirdRoll: Roll
@@ -67,7 +67,7 @@ class CreateRolls {
     }
   };
 
-  private createFrame = (): Frame => {
+  createFrame = (): Frame => {
     const roll = (pins: number, firstRollPins?: number) =>
       this.roll(pins, firstRollPins);
 

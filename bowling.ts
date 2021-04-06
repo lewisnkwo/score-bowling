@@ -1,41 +1,42 @@
 import Utils from "./utils";
 import CreateRolls from "./createRolls";
 
-class Bowling {
-  private utils: Utils = new Utils();
-  private createRolls: CreateRolls = new CreateRolls();
-  private isLastFrame: boolean = false;
-  private lastFrame: number[] = [];
+export default class Bowling {
+  utils: Utils = new Utils();
+  createRolls: CreateRolls = new CreateRolls();
+  isLastFrame: boolean = false;
+  lastFrame: number[] = [];
 
   constructor(public rolls: number[]) {
     setTimeout(() => {
       this.score();
-    }, 100); // To avoid incorrect values being passed in from this.rolls()
+    }, 100);
   }
 
-  public roll = (pins: number) =>
-    this.getTotal(this.createRolls.generateRolls(pins));
+  roll = (pins: number) => this.getTotal(this.createRolls.generateRolls(pins));
 
-  public startGame = (randomiseRolls: boolean): number =>
+  startGame = (randomiseRolls: boolean): number =>
     randomiseRolls ? this.roll(10) : this.getTotal(this.rolls);
 
-  private checkIfLastFrame = (r: number[], i: number) => {
+  checkIfLastFrame = (rolls: number[], i: number) => {
+    const thirdToLastRoll = rolls.length - 3;
+    const secondToLastRoll = rolls.length - 2;
     if (
-      r[r.length - 3] + r[r.length - 2] === 10 /* last frame is spare */ ||
-      r[r.length - 3] === 10 /* last frame is strike */
+      rolls[thirdToLastRoll] + rolls[secondToLastRoll] ===
+        10 /* last frame is spare */ ||
+      rolls[thirdToLastRoll] === 10 /* last frame is strike */
     ) {
-      if (i === r.length - 3) {
+      if (i === thirdToLastRoll) {
         this.isLastFrame = true;
-        this.lastFrame = r.slice(-3);
+        this.lastFrame = rolls.slice(-3);
       } else {
         this.isLastFrame = false;
         this.lastFrame = [];
       }
     } else {
-      // since there are no fill balls...
-      if (i === r.length - 2) {
+      if (i === secondToLastRoll) {
         this.isLastFrame = true;
-        this.lastFrame = r.slice(-2);
+        this.lastFrame = rolls.slice(-2);
       } else {
         this.isLastFrame = false;
         this.lastFrame = [];
@@ -43,7 +44,7 @@ class Bowling {
     }
   };
 
-  private getTotal = (rolls: number[]): number => {
+  getTotal = (rolls: number[]): number => {
     const ref = { ...rolls }; // Get a reference of initial rolls (due to `this.rolls` being mutable)
     let total = 0;
 
@@ -52,12 +53,12 @@ class Bowling {
       const secondRoll = ref[i + 1] ? i + 1 : -1;
       const thirdRoll = ref[i + 2] ? i + 2 : -1;
 
-      const spare =
+      const isSpare =
         ref[firstRoll] + ref[secondRoll] === 10 &&
         ref[firstRoll] !== 10 &&
         ref[secondRoll] !== 10;
 
-      const strike = ref[firstRoll] === 10;
+      const isStrike = ref[firstRoll] === 10;
 
       this.checkIfLastFrame(rolls, i);
 
@@ -67,10 +68,10 @@ class Bowling {
         break;
       }
 
-      if (spare && ref[thirdRoll] !== 0 && !this.isLastFrame) {
+      if (isSpare && ref[thirdRoll] !== 0 && !this.isLastFrame) {
         rolls[thirdRoll] = rolls[thirdRoll] * 2;
         total = this.utils.defaultReducer(rolls);
-      } else if (strike) {
+      } else if (isStrike) {
         if (this.isLastFrame) {
           const lastFrame = this.lastFrame;
           if (lastFrame.length === 3) {
@@ -98,7 +99,7 @@ class Bowling {
     return total;
   };
 
-  private checkGameRules = (r: number[]): number => {
+  checkGameRules = (r: number[]): number => {
     const isIncorrectPinCount = (r: number[]): boolean => {
       let decision: boolean = false;
       for (let i = 0; i < r.length - 1; i++) {
@@ -193,7 +194,7 @@ class Bowling {
     } else return this.startGame(false); // If `true` this.rolls will be randomised (CreateFrames)
   };
 
-  public score = (): number => {
+  score = (): number => {
     try {
       return this.checkGameRules(this.rolls);
     } catch (e) {
@@ -201,5 +202,3 @@ class Bowling {
     }
   };
 }
-
-export default Bowling;
