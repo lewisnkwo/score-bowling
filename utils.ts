@@ -2,7 +2,7 @@ class Utils {
   defaultReducer = (r: number[]): number =>
     r.reduce((first, second) => first + second);
 
-  calculatePins = (pinLimit?: number) =>
+  calculatePins = (pinLimit?: number): number =>
     pinLimit
       ? Math.floor(Math.random() * (pinLimit + 1))
       : Math.floor(Math.random() * 11);

@@ -1,20 +1,18 @@
 import { Roll, Frame } from "./types";
 import Utils from "./utils";
 
-class CreateRolls {
+class CreateRolls<T extends number> {
   utils: Utils = new Utils();
-  rolls: number[] = [];
+  rolls: T[] = [];
 
-  roll = (pins: number, firstRollPins?: number): Roll => {
-    return {
-      pins,
-      pinsLeft: firstRollPins ? firstRollPins - pins : 10 - pins,
-      strike: pins === 10,
-    };
-  };
+  roll = (pins: T, firstRollPins?: T): Roll<T> => ({
+    pins,
+    pinsLeft: firstRollPins ? firstRollPins - pins : 10 - pins,
+    strike: pins === 10,
+  });
 
-  generateRolls = (pinRounds: number): number[] => {
-    let totalScores: number[] = [];
+  generateRolls = (pinRounds: number): T[] => {
+    let totalScores: T[] = [];
 
     for (let i = 0; i < pinRounds; i++) {
       const frame = this.createFrame();
@@ -27,10 +25,10 @@ class CreateRolls {
   };
 
   getFrameScore = (
-    firstRoll: Roll,
-    secondRoll: Roll,
-    thirdRoll: Roll
-  ): Frame => {
+    firstRoll: Roll<T>,
+    secondRoll: Roll<T>,
+    thirdRoll: Roll<T>
+  ): Frame<T> => {
     if (firstRoll.strike) {
       // Strike
       if (secondRoll.strike) {
@@ -67,17 +65,20 @@ class CreateRolls {
     }
   };
 
-  createFrame = (): Frame => {
-    const roll = (pins: number, firstRollPins?: number) =>
-      this.roll(pins, firstRollPins);
+  createFrame = (): Frame<T> => {
+    const roll = (pins: T, firstRollPins?: T) => this.roll(pins, firstRollPins);
+    const calculatePins = this.utils.calculatePins() as T;
 
-    const firstRoll = () => roll(this.utils.calculatePins());
-    const secondRoll = (firstRoll: Roll) => {
-      return !firstRoll.strike
-        ? roll(this.utils.calculatePins(firstRoll.pinsLeft), firstRoll.pinsLeft)
-        : roll(this.utils.calculatePins());
-    };
-    const thirdRoll = () => roll(this.utils.calculatePins());
+    const firstRoll = () => roll(calculatePins);
+    const secondRoll = (firstRoll: Roll<T>) =>
+      !firstRoll.strike
+        ? roll(
+            this.utils.calculatePins(firstRoll.pinsLeft) as T,
+            firstRoll.pinsLeft as T
+          )
+        : roll(calculatePins);
+
+    const thirdRoll = () => roll(calculatePins);
 
     const first = firstRoll();
     const second = secondRoll(first);

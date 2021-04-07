@@ -1,13 +1,13 @@
 import Utils from "./utils";
 import CreateRolls from "./createRolls";
 
-export default class Bowling {
+export default class Bowling<T extends number> {
   utils: Utils = new Utils();
-  createRolls: CreateRolls = new CreateRolls();
+  createRolls: CreateRolls<T> = new CreateRolls();
   isLastFrame: boolean = false;
   lastFrame: number[] = [];
 
-  constructor(public rolls: number[]) {
+  constructor(public rolls: T[]) {
     setTimeout(() => {
       this.score();
     }, 100);
