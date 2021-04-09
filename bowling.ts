@@ -1,9 +1,7 @@
 import Utils from "./utils";
-import CreateRolls from "./createRolls";
 
 export default class Bowling<T extends number> {
   utils: Utils = new Utils();
-  createRolls: CreateRolls<T> = new CreateRolls();
   isLastFrame: boolean = false;
   lastFrame: number[] = [];
 
@@ -12,11 +10,6 @@ export default class Bowling<T extends number> {
       this.score();
     }, 100);
   }
-
-  roll = (pins: number) => this.getTotal(this.createRolls.generateRolls(pins));
-
-  startGame = (randomiseRolls: boolean): number =>
-    randomiseRolls ? this.roll(10) : this.getTotal(this.rolls);
 
   checkIfLastFrame = (rolls: number[], i: number) => {
     const thirdToLastRoll = rolls.length - 3;
@@ -191,7 +184,7 @@ export default class Bowling<T extends number> {
       throw new Error("Score cannot be taken until the end of the game");
     } else if (isGameUnfinished(r)) {
       throw new Error("Should not be able to roll after game is over");
-    } else return this.startGame(false); // If `true` this.rolls will be randomised (CreateFrames)
+    } else return this.getTotal(this.rolls);
   };
 
   score = (): number => {
