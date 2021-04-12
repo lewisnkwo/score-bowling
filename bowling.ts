@@ -11,32 +11,6 @@ export default class Bowling<T extends number> {
     }, 100);
   }
 
-  checkIfLastFrame = (rolls: number[], i: number) => {
-    const thirdToLastRoll = rolls.length - 3;
-    const secondToLastRoll = rolls.length - 2;
-    if (
-      rolls[thirdToLastRoll] + rolls[secondToLastRoll] ===
-        10 /* last frame is spare */ ||
-      rolls[thirdToLastRoll] === 10 /* last frame is strike */
-    ) {
-      if (i === thirdToLastRoll) {
-        this.isLastFrame = true;
-        this.lastFrame = rolls.slice(-3);
-      } else {
-        this.isLastFrame = false;
-        this.lastFrame = [];
-      }
-    } else {
-      if (i === secondToLastRoll) {
-        this.isLastFrame = true;
-        this.lastFrame = rolls.slice(-2);
-      } else {
-        this.isLastFrame = false;
-        this.lastFrame = [];
-      }
-    }
-  };
-
   getTotal = (rolls: number[]): number => {
     const ref = { ...rolls }; // Get a reference of initial rolls (due to `this.rolls` being mutable)
     let total = 0;
@@ -53,7 +27,9 @@ export default class Bowling<T extends number> {
 
       const isStrike = ref[firstRoll] === 10;
 
-      this.checkIfLastFrame(rolls, i);
+      const frame = this.utils.checkIfLastFrame(rolls, i);
+      this.isLastFrame = frame.isLastFrame;
+      this.lastFrame = frame.lastFrame;
 
       // If perfect game
       if (rolls.every((r) => r === 10)) {
@@ -93,83 +69,6 @@ export default class Bowling<T extends number> {
   };
 
   checkGameRules = (r: number[]): number => {
-    const isIncorrectPinCount = (r: number[]): boolean => {
-      let decision: boolean = false;
-      for (let i = 0; i < r.length - 1; i++) {
-        const firstRoll = r[i];
-        const secondRoll = r[i + 1];
-        const firstPreviousRoll = r[i - 1];
-
-        const currentFrame = [firstRoll, secondRoll];
-        this.checkIfLastFrame(r, i);
-        if (this.isLastFrame) {
-          const lastFrame = this.lastFrame;
-
-          const currentRoll = lastFrame[0];
-          const rollOne = lastFrame[1];
-          const rollTwo = lastFrame[2];
-
-          if (lastFrame.length === 3) {
-            if (!lastFrame.every((r) => r === 10)) {
-              if (rollTwo === 10) {
-                if (currentRoll + rollOne === 10) {
-                  decision = false;
-                  break;
-                }
-                decision = true;
-                break;
-              }
-            }
-          }
-        }
-
-        if (
-          this.utils.defaultReducer(currentFrame) > 10 &&
-          firstRoll !== 10 &&
-          secondRoll !== 10 &&
-          firstPreviousRoll + firstRoll !== 10
-        ) {
-          decision = true;
-          break;
-        }
-      }
-      return decision;
-    };
-
-    const checkIfScoresMissing = (r: number[]): boolean => {
-      const lastFrame = r.slice(-3);
-
-      if (
-        lastFrame[0] + lastFrame[1] === 10 &&
-        lastFrame[0] !== 10 &&
-        lastFrame[1] !== 10 &&
-        lastFrame[2] > 0
-      ) {
-        // if first two rolls in last frame is a spare and last roll is a strike
-        return false;
-      } else if (r === [] || r.length < 12) {
-        return true;
-      } else if (
-        lastFrame[0] !== 10 &&
-        lastFrame[1] === 10 &&
-        lastFrame[2] === 10
-      ) {
-        // both bonus rolls for a strike in the last frame must be rolled before score can be calculated
-        return true;
-      } else if (lastFrame[0] === 0 && lastFrame[1] + lastFrame[2] === 10) {
-        // bonus roll for a spare in the last frame must be rolled before score can be calculated
-        return true;
-      } else if (
-        lastFrame[0] !== 10 &&
-        lastFrame[1] !== 10 &&
-        lastFrame[2] === 10
-      ) {
-        // bonus rolls for a strike in the last frame must be rolled before score can be calculated
-        return true;
-      }
-      return false;
-    };
-
     const isGameUnfinished = (r: number[]): boolean =>
       r.length > 20 &&
       this.isLastFrame &&
@@ -178,9 +77,9 @@ export default class Bowling<T extends number> {
 
     if (!r.every((r) => r >= 0 && r <= 10)) {
       throw new Error("Pins must have a value from 0 to 10");
-    } else if (isIncorrectPinCount(r)) {
+    } else if (this.utils.isIncorrectPinCount(r)) {
       throw new Error("Pin count exceeds pins on the lane");
-    } else if (checkIfScoresMissing(r)) {
+    } else if (this.utils.checkIfScoresMissing(r)) {
       throw new Error("Score cannot be taken until the end of the game");
     } else if (isGameUnfinished(r)) {
       throw new Error("Should not be able to roll after game is over");

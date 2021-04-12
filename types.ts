@@ -11,3 +11,8 @@ export interface Frame<T> {
   scores: T[];
   case: FrameCase;
 }
+
+export interface LastFrame {
+  isLastFrame: boolean;
+  lastFrame: number[];
+}
